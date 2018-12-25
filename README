@@ -1,0 +1,144 @@
+Justin Dorosh and Timi Dayo-Kayode 
+4/12/18 
+Homework 6 
+UM emulator 
+README
+
+
+Help: Clarifications on the spec from Jonathan Chang and Robin Park, a 
+      current, and fromer comp40 student 
+
+What has been correctly implemented and what has not: All works...  I hope:)
+
+Departures from design: We departed from our design by adding an extra module  
+                        that acts as the glue between the instructions and 
+                        segments abstractions. This module contains the 
+                        program count. This module repeatedly calls 
+                        a function to process an instruction. These 
+                        instructions are kept in their own instructions module.
+                        In our intital design, our instructions module 
+                        handled the program count and launching the 
+                        program and executing instructions. We felt that 
+                        this was too much for one file and that it should 
+                        only know about its 14 instructions and how to execute
+                        them. 
+
+Archeitecture: The following are out modules
+  - Main: This module handles command line arguments and calls a run function 
+          in our UniversalMachine module in order to launch the program 
+
+  - UniversalMachine: This module contains the program counter and continually
+                      calls functions in our instructions module until the 
+                      program is complete. It acts as the glue between our 
+                      instructions and segents module as it can call functions
+                      from both of these modules. 
+
+  - Instructions: This module contains the 14 different instructions and 
+                  the program's eight registers. It calls functions in 
+                  our segments module when is has to load or store a value 
+                  into a segment. 
+
+  - Segments: This module contains the main memory of the emulator. It is 
+              where values can be loaded and stored into specific segments. 
+              The segments module contains functions to add and remove words
+              from memory. It also has functions to allow new memory segments 
+              to be mapped and unmapped. This module does not need to know 
+              anything about the instructions module or any of the 
+              instructions that the emulator has. It also does not need to 
+              know anything about the registers. 
+
+  - Bitpack: This module is used by UniversalMachine in order to extract 
+             opcodes and register values from instructions. 
+ 
+How long it takes to execute 50 million instructions/ how you know: 
+  - It takes about 10 seconds to run 50 million instructions. We know this 
+    because it takes 15 seconds to execute 80 million instructions, so it 
+    executes about 5 million instructions per second. 50 million divided 
+    by 5 is about 10, so it takes about 10 seconds. 
+
+UMTESTS and what they do: 
+
+conditional_move.um- 
+This function tests the two main cases for conditional move. The first 
+is when the value in register c is equal to 0. This means the conditional 
+move does not take place. This test loads different values into a and b 
+and then loads 0 into register c. It then checks to make sure that registers
+a and b still their original values. It then loads the value of 0 into 
+register c. Then, it performs the conditional move and ensures that the 
+value of register c gets the value of register b.  
+
+emit_load_program_test.um- 
+This test maps several segments with instructions. It takes segment 5 and 
+loads this value into segment 0. Then, it executes these instructions and 
+halts. 
+
+emit_store_seg_large_test.um- 
+This test maps a segment with over 1000000 and then checks the values of 
+several of them in order to make sure that they are the correct values. 
+
+emit_add_test.um- 
+This test takes two numbers and adds them in order to make sure that the 
+proper output is given. 
+
+emit_load_seg_test.um-
+This test maps a segment and adds number to it. Then it retrieves that
+value from memory and makes sure that it is the same number.
+
+emit_store_seg_test.um-
+This test is very similar to the load seg store as it also maps several
+segments and loads values to them. It then retrieves these values and checks
+to make sure they match the expected value that we loaded into them.  
+
+emit_bitwise_NAND.um-
+This test takes two numbers that fit into 25 bit representations then 
+multiplies them together to get a large number that would fit into a 32 
+bit representation. It then repeats this to get another really large 32 
+bit number. It then NANDs these two numbers in order to produce 'j', the 
+expected output. 
+
+emit_map_seg_test.um-
+This test maps several segments and then frees two segments and remaps 
+two more segments. It makes sure that these segments still get properly 
+reallocated. 
+
+emit_unmap_test.um-
+This test maps several segments, then unmaps them in order to make sure 
+that it works properly. 
+
+emit_div_test.um-
+This test takes the numbers 50 and 10 and loads them into registers b 
+and c. Then it divides 50 by 10 to get the expected output of 5. 
+
+emit_mult_test.um-
+This test takes the numbers 5 and 10 and multiplies them together to 
+get the expected output of 50 in decimal. 
+
+halt.um-
+This test immediately halts the program and prints nothing to stdout. 
+
+emit_input_test.um-
+This test loads two values into the input and then outputs them to make 
+sure that the right value was retrieved. 
+
+emit_print_six_test.um-
+This test was one of the tests written from lab. It adds several numbers 
+and then prints the value after performing several calculations. 
+
+halt-verbose.um- 
+This test halts the program in order to prevent the output of "Bad!". This
+was also from lab. 
+
+How long we spent: 
+        analyzing- 4 hours 
+        preparing- 13 hours
+        solving problems- 28 hours 
+
+
+
+
+
+
+                      
+
+
+

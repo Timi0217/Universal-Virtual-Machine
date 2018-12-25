@@ -1,0 +1,15 @@
+rm halt.um 
+rm halt-verbose.um 
+rm emit_add_test.um 
+rm emit_print_six_test.um 
+rm conditional_move.um 
+rm emit_bitwise_NAND.um 
+rm emit_load_program_test.um 
+rm emit_load_seg_test.um 
+rm emit_store_seg_test.um 
+rm emit_input_test.um 
+rm emit_mult_test.um 
+rm emit_div_test.um 
+rm emit_unmap_test.um 
+rm emit_map_seg_test.um 
+rm emit_store_seg_large_test.um 

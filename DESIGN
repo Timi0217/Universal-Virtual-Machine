@@ -1,0 +1,181 @@
+Timi Dayo-Kayode and Justin Dorosh  
+4/5/18 
+Design Doc
+Homework 6 
+
+Modules:
+
+				Main.c 
+This module will call the create and run function in UniversalMachine.h in order
+to create and launch the program. 
+
+				UniversalMachine.h 
+This module will act as the glue for the segment and execute modules. It will 
+call functions in execute.h and segments.h that will initialize the memory and 
+the registers. Then it will call functions that process the instructions in 
+segment zero.
+
+				Execute.h 
+This module will hold the registers and the program counter. 
+It will initialize the memory segments and begin executing the code in the zero 
+segment. To begin, all registers will be initialized to zero. This file will 
+also contain the program counter which will be initialized to point to $m[0][0],
+which is the first word in segment zero. 
+
+				Segments.h 
+This will contain the main memory for the program, which includes all of the 
+segments associated with the program. The main memory will contain a mapped and 
+an unmapped sequence of segments, with the mapped sequence corresponding to 
+malloc’d segments and the unmapped sequence corresponding to freed segments 
+
+				Bitpack.h 
+This will be used to store operation codes, values, and register values because 
+it allows words, which will be uint_32t’s to be easily updated and modified. 
+
+
+				Architecture: 
+
+Our main.h will call a create and run functions in our UniversalMachine.h module
+in order to create and run the universal machine. These functions will call 
+initialize functions in the execute and segment modules to set up and initialize
+the universal machine’s memory and registers. After the machine is set up and 
+all the words are added to the zero segment, we will call a function in 
+UniversalMachine.h that will iterate through all the words in segment zero and 
+process each instruction. Our execute.h will use bitpack in order to update and 
+modify register values and operation codes. Our execute.h will contain the 14 um
+operations, the program counter, and the registers. This is where all of the 
+operations will take place. Our segments.h will contain all of the memory 
+segments that make up main memory. This module is how we will push and read 
+values from main memory. 
+
+
+				Representation:
+
+Registers 
+
+This will be represented as a sequence with entries of the type uint32_t. 
+Each uint32_t will be a word that can be modified and updated using the bitpack 
+module. The final index of the sequence will represent the program counter. 
+
+Main memory 
+
+We will represent allocated memory segments in a mapped sequence. 
+The memory segments will be represented in a mapped sequence where each index 
+contains a sequence that will represent a segment in memory. The length of the 
+main memory sequence will be equal to the number of segments in that memory. 
+Each segment will have the type uint32_t which will be a word. 
+The length of each sequence segment will be the number of words that each 
+segment holds. There will also be an unmapped sequence that will contain the 
+indices of the freed memory segments. When a freed memory segment is re-malloc’d
+,then its index will be removed from the unmapped sequence. 
+
+Interface:
+	
+	UniversalMachine.h: 
+
+		#include “segments.h” 
+		#include “execute.h” 
+		
+		void create_machine(int memoryMB);
+		void run();
+		void process_instructions(); 
+
+	Execute.h:
+
+		#include “segments.h” 
+
+		typedef uint32_t Um_instruction; 
+		typedef uint32_t Register;
+		
+		void initialize_registers(int num_registers); 
+		void free_registers(); 
+		//functions for the segment instructions
+		void conditonal_move(Um_instruction, registers *);
+		void segmented_load(Um_instruction, registers *);
+		void segmented_store(Um_instruction, registers *);
+		void addition(Um_instruction, registers *);
+		void subtraction(Um_instruction, registers *);
+		void multiplication(Um_instruction, registers*);
+		void division(Um_instruction, registers *);
+		void bitwise_NAND(Um_instruction, registers *);
+		void halt(Um_instruction, registers *);
+		void map_segment(Um_instruction, registers *);
+		void unmap_segment(Um_instruction, registers *);
+		void output(Um_instruction, registers *);
+		void input(Um_instruction, registers *);
+		void load_program(Um_instruction, registers *);
+		void load_value(Um_instruction, registers *);
+
+	Segments.h:	
+		typedef uint32_t word;
+		void initialize_segments(int seg_zero_size); 
+		void free_segments(); 
+		// functions for mapping and unmapping segments
+		int map_segment(int word_count); // returns the segment id of 
+		created segment 
+		void unmap_segment(int identifier);
+		void add_word_to_memory(int seg_id, int offset, word value);
+		word retrieve_word_from_memory(int seg_id, int offset); 
+
+	Bitpack.h:
+		We will use the bitpack solutions provided by Mark on the comp40
+		calendar. 
+
+
+			Invariants:
+
+Our UM has 14 possible operations
+The segment 0 will always contain the words of the program. 
+A word in segment s and an offset of n is designated $m[s][n].
+Once a segment is mapped, it will not change in size. Additionally, its index in
+our mapped sequence will never change. If a mapped segment is freed, then its 
+identifier will be stored in our unmapped sequence. This allows for the freed 
+segment to be reallocated again. Segments that have indices in unmapped will 
+return segmentation faults if there is an attempt to access them. Once a 
+segment has been mapped its size will not change. Additionally, its identifier 
+index also will never change. Once a segment is unmapped, it will be freed from 
+the mapped sequence and have its identifier index stored in the unmapped 
+sequence of identifiers. New segments will always use the lowest identifier in 
+the unmapped sequence. If the sequence is empty, then the length of the sequence
+will be the identifier of the new segment.
+
+
+			Testing:
+
+Main: 
+
+We will make sure that the machine will fail if the given file is not a
+valid .um binary
+	
+UniversalMachine.h:
+
+We will make sure that if the given file is a valid .um binary, but does not 
+contain valid words, the machine will fail. We will check to make sure that 
+machine code that uses all 14 operations produces the proper output. We will 
+test this on several different .um files to make sure that the machine works 
+properly and instructions are executed accordingly. 
+
+
+
+Execute.h:
+
+If at the beginning of the machine cycle, the program points outside the bounds
+of $m[0], we will make sure that the machine will fail. If at the beginning of 
+an instruction, the word pointed to by the instruction does not code for a valid
+instruction, we will make sure the machine fails. If a segmented load or a 
+segmented store points to an unmapped location, then we will make sure the 
+machine will fail. If the machine tries to unmap the zero segment or a segment 
+that has already been unmapped, we will make sure that the machine will fail. 
+If an instruction divides by zero, we will make sure that the system will fail. 
+If an instruction loads a segment from a segment that is not mapped, then we 
+will make sure that the machine fails. If the machine tries to output a value 
+that is above 255, the machine will fail We will also test to make sure that 
+each operation produces the expected output on a multitude of test cases by 
+writing shell scripts. We will test to make sure that the registers are properly
+initialized to the right size and that the program counter is updated 
+appropriately.
+
+Segments.h:
+
+See our test_segments.c 
+

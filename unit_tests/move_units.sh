@@ -1,0 +1,15 @@
+cp halt.um /h/jdoros01/comp40/hw6
+cp halt-verbose.um /h/jdoros01/comp40/hw6
+cp emit_add_test.um /h/jdoros01/comp40/hw6
+cp emit_print_six_test.um /h/jdoros01/comp40/hw6
+cp conditional_move.um /h/jdoros01/comp40/hw6
+cp emit_bitwise_NAND.um /h/jdoros01/comp40/hw6
+cp emit_load_program_test.um /h/jdoros01/comp40/hw6
+cp emit_load_seg_test.um /h/jdoros01/comp40/hw6
+cp emit_store_seg_test.um /h/jdoros01/comp40/hw6
+cp emit_input_test.um /h/jdoros01/comp40/hw6
+cp emit_mult_test.um /h/jdoros01/comp40/hw6
+cp emit_div_test.um /h/jdoros01/comp40/hw6
+cp emit_unmap_test.um /h/jdoros01/comp40/hw6
+cp emit_map_seg_test.um /h/jdoros01/comp40/hw6
+cp emit_store_seg_large_test.um /h/jdoros01/comp40/hw6
